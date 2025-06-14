@@ -3,33 +3,27 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// CORS config for frontend origin
 const corsOptions = {
-  origin: ['https://formul-deploy-5.onrender.com'], // 🛠️ REPLACE with your actual frontend URL
+  origin: ['https://formul-deploy-5.onrender.com'], // Replace with actual frontend if needed
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: '*',
 };
 
 app.use(cors(corsOptions));
-// <- handles all OPTIONS preflight
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Serve static files (HTML, CSS, JS, images, etc.)
-app.use(express.static(path.join(__dirname, '..')));
-
-// Serve index.html on root route
+// Optional: Simple root response
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
+  res.send('Backend is running.');
 });
 
-// Form Submission Route
+// Handle form submission
 app.post('/send-form', async (req, res) => {
   const { name, phone, email, message } = req.body;
 
@@ -43,7 +37,7 @@ app.post('/send-form', async (req, res) => {
 
   const mailOptions = {
     from: email,
-    to: 'meryeminalkac80@gmail.com', // Change this to your real email
+    to: 'meryeminalkac80@gmail.com',
     subject: 'New Quote Request from Website',
     text: `
       Name: ${name}
@@ -52,8 +46,7 @@ app.post('/send-form', async (req, res) => {
       Message: ${message}
     `,
   };
-  console.log('EMAIL_USER:', process.env.EMAIL_USER);
-  console.log('EMAIL_PASS exists:', !!process.env.EMAIL_PASS);
+
   try {
     await transporter.sendMail(mailOptions);
     res.status(200).json({ message: 'Form sent successfully' });
@@ -63,8 +56,6 @@ app.post('/send-form', async (req, res) => {
   }
 });
 
-// Start Server
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Listening on port ${PORT}`);
 });
-
