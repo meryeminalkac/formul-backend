@@ -1,0 +1,27 @@
+{
+  "name": "formul-deploy",
+  "version": "1.0.0",
+  "main": "js/server.js",
+  "scripts": {
+    "start": "node js/server.js"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "nodemailer": "^7.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meryeminalkac/formul-deploy-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/meryeminalkac/formul-deploy-/issues"
+  },
+  "homepage": "https://github.com/meryeminalkac/formul-deploy-#readme",
+  "description": ""
+}
