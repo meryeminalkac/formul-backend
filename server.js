@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 3000;
 const corsOptions = {
   origin: ['https://formul-deploy.pages.dev/','https://formul-backend.onrender.com'],
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: '*',
+  allowedHeaders: ['Content-Type', 'Origin', 'Referer'],
+  credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -23,6 +24,11 @@ app.get('/', (req, res) => {
   res.send('Backend is running.');
 });
 
+app.options('/send-form', (req, res) => {
+  res.header('Access-Control-Allow-Methods', 'POST');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.status(204).end();
+});
 // Handle form submission
 app.post('/send-form', async (req, res) => {
   const { name, phone, email, message } = req.body;
