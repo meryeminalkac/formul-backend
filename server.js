@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // CORS config for frontend origin
 const corsOptions = {
-  origin: ['https://formul-deploy-5.onrender.com'], // Replace with actual frontend if needed
+  origin: ['https://formul-deploy.pages.dev/','https://formul-deploy-5.onrender.com'],
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: '*',
 };
