@@ -2,66 +2,53 @@ require('dotenv').config();
 const express = require('express');
 const nodemailer = require('nodemailer');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-// CORS config for frontend origin
-const corsOptions = {
-  origin: ['https://formul-deploy.pages.dev/','https://formul-backend.onrender.com'],
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Origin', 'Referer'],
-  credentials: true
-};
+// Enhanced CORS
+app.use(cors({
+  origin: 'https://formul-deploy.pages.dev',
+  methods: ['POST']
+}));
 
-app.use(cors(corsOptions));
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// Request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
-// Optional: Simple root response
+// Health check
 app.get('/', (req, res) => {
-  res.send('Backend is running.');
+  res.status(200).send('Backend operational');
 });
 
-app.options('/send-form', (req, res) => {
-  res.header('Access-Control-Allow-Methods', 'POST');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.status(204).end();
-});
-// Handle form submission
+// Email endpoint
 app.post('/send-form', async (req, res) => {
-  const { name, phone, email, message } = req.body;
-
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
-
-  const mailOptions = {
-    from: email,
-    to: 'meryeminalkac80@gmail.com',
-    subject: 'New Quote Request from Website',
-    text: `
-      Name: ${name}
-      Phone: ${phone}
-      Email: ${email}
-      Message: ${message}
-    `,
-  };
-
   try {
-    await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Form sent successfully' });
+    const { name, email, message } = req.body;
+    
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      to: 'meryeminalkac80@gmail.com',
+      subject: 'New Form Submission',
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+    });
+
+    res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).json({ error: 'Form submission failed' });
+    console.error('Email error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Listening on port ${PORT}`);
+// Start server
+app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
+  console.log(`Server ready`);
 });
