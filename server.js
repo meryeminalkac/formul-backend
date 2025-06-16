@@ -10,7 +10,7 @@ app.use(cors({
   origin: 'https://5beecffd.formul-deploy.pages.dev',
   methods: ['POST']
 }));
-
+app.use(express.json());
 // Request logging
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
