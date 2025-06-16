@@ -13,9 +13,10 @@ app.use(cors({
 app.use(express.json());
 // Request logging
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 });
+
 
 // Health check
 app.get('/', (req, res) => {
@@ -51,4 +52,8 @@ app.post('/send-form', async (req, res) => {
 // Start server
 app.listen(process.env.PORT || 3000, '0.0.0.0', () => {
   console.log(`Server ready`);
+});
+
+app.use((req, res) => {
+  res.status(404).send(`Cannot ${req.method} ${req.originalUrl}`);
 });
