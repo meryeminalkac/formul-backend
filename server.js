@@ -7,7 +7,7 @@ const app = express();
 
 // Enhanced CORS
 app.use(cors({
-  origin: 'https://5beecffd.formul-deploy.pages.dev',
+  origin: 'https://formul-deploy.pages.dev',
   methods: ['POST']
 }));
 app.use(express.json());
